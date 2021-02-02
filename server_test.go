@@ -15,85 +15,73 @@ type testCase struct {
 	statuscode int
 }
 
-type mockStorage struct{
-
+type mockStorage struct {
 }
 
-func(m mockStorage)Add(name string, age int)(err error){
+func (m mockStorage) Add(name string, age int) (err error) {
 	return nil
 }
 
-func(m mockStorage)Update(id int, newName string, newAge int)(err error){
+func (m mockStorage) Update(id int, newName string, newAge int) (err error) {
 	return nil
 }
 
-func(m mockStorage)Count()(count int,err error){
-	return 10,nil
+func (m mockStorage) Count() (count int, err error) {
+	return 10, nil
 }
 
-func(m mockStorage)Get(id int)(user Data, err error){
+func (m mockStorage) Get(id int) (user Data, err error) {
 	user = Data{
-		ID: id,
+		ID:   id,
 		Name: "Khabib",
-		Age: 26,
+		Age:  26,
 	}
 
 	return user, nil
 }
 
-func(m mockStorage)GetByName(name string)(users []Data, err error){
+func (m mockStorage) GetByName(name string) (users []Data, err error) {
 	users = []Data{
 		Data{
-		ID: 1,
-		Name: name,
-		Age: 26,
+			ID:   1,
+			Name: name,
+			Age:  26,
 		},
 		Data{
-		ID: 1,
-		Name: name,
-		Age: 26,
+			ID:   1,
+			Name: name,
+			Age:  26,
 		},
 	}
 	return users, nil
 }
 
-func(m mockStorage)GetByAge(age int)(users []Data, err error){
+func (m mockStorage) GetByAge(age int) (users []Data, err error) {
 
 	users = []Data{
 		Data{
-		ID: 1,
-		Name: "Khabib",
-		Age: age,
+			ID:   1,
+			Name: "Khabib",
+			Age:  age,
 		},
 		Data{
-		ID: 1,
-		Name: "Khabib",
-		Age: age,
+			ID:   1,
+			Name: "Khabib",
+			Age:  age,
 		},
 	}
 	return users, nil
 }
-
-
 
 func database() Server { //
-	// dbtest, err := sql.Open("mysql", "root:1643@(0.0.0.0:3306)/usersdb")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	var storage Storager = mockStorage{
 
-	}
-	// storage := Storage{
-	// 	database: dbtest,
-	// }
+	var storage Storager = mockStorage{}
+
 	server := Server{
 		strg: storage,
 	}
 	return server
 }
-
-
 
 func TestHandlerAdd(t *testing.T) {
 
@@ -101,12 +89,12 @@ func TestHandlerAdd(t *testing.T) {
 	cases := []testCase{
 		testCase{
 			testreq:    "?name=&age=105",
-			response:   "Данные не переданы. Ожидаемый формат Add?name=Borat&Age=68",
+			response:   "No data transferred. Expected format Add?name=Borat&Age=68",
 			statuscode: http.StatusBadRequest,
 		},
 		testCase{
 			testreq:    "?name=Borat&age=105",
-			response:   "Данные добавлены",
+			response:   "Data added ",
 			statuscode: http.StatusOK,
 		},
 	}
@@ -116,12 +104,12 @@ func TestHandlerAdd(t *testing.T) {
 		w := httptest.NewRecorder()
 		server.handlerAdd(w, req)
 		if w.Code != item.statuscode {
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number  %d", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number  %d", caseNum)
 		}
 	}
 }
@@ -132,12 +120,12 @@ func TestHandlerUpdate(t *testing.T) {
 	cases := []testCase{
 		testCase{
 			testreq:    "?name=&age=105",
-			response:   "Данные не переданы. Ожидаемый формат Update?id=69&name=Borat&Age=68",
+			response:   "No data transferred. Expected format Update?id=69&name=Borat&Age=68",
 			statuscode: http.StatusBadRequest,
 		},
 		testCase{
 			testreq:    "?id=39&name=Borat&age=105",
-			response:   "Данные изменены",
+			response:   "Data changed",
 			statuscode: http.StatusOK,
 		},
 	}
@@ -147,13 +135,13 @@ func TestHandlerUpdate(t *testing.T) {
 		w := httptest.NewRecorder()
 		server.handlerUpdate(w, req)
 		if w.Code != item.statuscode {
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d ", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number %d ", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
 			fmt.Println(string(body))
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d ", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number  %d ", caseNum)
 		}
 	}
 }
@@ -175,13 +163,13 @@ func TestHandlerCount(t *testing.T) {
 		server.handlerCount(w, req)
 		if w.Code != item.statuscode {
 			fmt.Println(w.Code)
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number %d", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
 			fmt.Println(string(body))
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number %d", caseNum)
 		}
 	}
 }
@@ -192,12 +180,12 @@ func TestHandlerGet(t *testing.T) {
 	cases := []testCase{
 		testCase{
 			testreq:    "?name=&age=105",
-			response:   "Данные не получены. Ожидаемый формат Get?id=69",
+			response:   "No data received. Expected format  Get?id=69",
 			statuscode: http.StatusBadRequest,
 		},
 		testCase{
 			testreq:    "?id=34",
-			response:  `{"ID":34,"Name":"Khabib","Age":26}`,
+			response:   `{"ID":34,"Name":"Khabib","Age":26}`,
 			statuscode: http.StatusOK,
 		},
 	}
@@ -207,13 +195,13 @@ func TestHandlerGet(t *testing.T) {
 		w := httptest.NewRecorder()
 		server.handlerGet(w, req)
 		if w.Code != item.statuscode {
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number %d", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
 			fmt.Println(string(body))
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number %d", caseNum)
 		}
 	}
 }
@@ -224,7 +212,7 @@ func TestHandlerGetByName(t *testing.T) {
 	cases := []testCase{
 		testCase{
 			testreq:    "?name=&age=105",
-			response:   "Данные не получены. Ожидаемый формат GetByName?name=Borat",
+			response:   "No data received. Expected format GetByName?name=Borat",
 			statuscode: http.StatusBadRequest,
 		},
 		testCase{
@@ -239,13 +227,13 @@ func TestHandlerGetByName(t *testing.T) {
 		w := httptest.NewRecorder()
 		server.handlerGetByName(w, req)
 		if w.Code != item.statuscode {
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number %d", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
 			fmt.Println(string(body))
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number %d", caseNum)
 		}
 	}
 }
@@ -256,7 +244,7 @@ func TestHandlerGetByAge(t *testing.T) {
 	cases := []testCase{
 		testCase{
 			testreq:    "?age=",
-			response:   "Данные не получены. Ожидаемый формат GetByAge?age=68",
+			response:   "No data received. Expected format GetByAge?age=68",
 			statuscode: http.StatusBadRequest,
 		},
 		testCase{
@@ -271,13 +259,13 @@ func TestHandlerGetByAge(t *testing.T) {
 		w := httptest.NewRecorder()
 		server.handlerGetByAge(w, req)
 		if w.Code != item.statuscode {
-			t.Errorf("Фактический статускод не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual status code did not match the expected one. Case number %d", caseNum)
 		}
 		response := w.Result()
 		body, _ := ioutil.ReadAll(response.Body)
 		if string(body) != item.response {
 			fmt.Println(string(body))
-			t.Errorf("Фактический ответ не совпал с ожидаемым. Кейс номер %d", caseNum)
+			t.Errorf("The actual response did not match what was expected. Case number %d", caseNum)
 		}
 	}
 }
