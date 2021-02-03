@@ -3,15 +3,17 @@
  import (
 	 "testing"
 	 "math/rand"
-	 "fmt"
+	//  "fmt"
 	 "net/http"
 	 "log"
 	 "strconv"
 	 "time"
 	 "sync"
+	 "database/sql"
+	 _ "github.com/go-sql-driver/mysql"
  )
 
- var client = &http.Client{Timeout: time.Second}
+ 	var client = &http.Client{Timeout: 2*time.Second}
 
  type Request struct{
 	ID int
@@ -29,30 +31,31 @@ func testRequest(sr Request)(error){
 		log.Fatal(err)
 	}
 	//отправляем запрос на сервер
-	_ err := client.Do(searchReq)
+	_, err = client.Do(searchReq)
 	if err != nil{
 		log.Fatal(err)
 	}
-	defer client.CloseIdleConnections()
+	// defer client.CloseIdleConnections()
 	return  err
 
 }
 
- func TestProductivity(t *testing.T){
-	//слайс запросов, отправляемых на тестируемый сервер
+func TestProductivity(t *testing.T){
+	
+	db, err := sql.Open("mysql", "root:1643@(0.0.0.0:3306)/usersdb")
+	if err != nil {
+		log.Fatal("Error connecting to the database when starting the service")
+	}
+	_, err = db.Exec("delete from usersdb.users")
+    if err != nil{
+        log.Fatal(err)
+    }	
 
 	var mu sync.Mutex
 
 	mu.Lock()
 	requests := []Request{
 	   
-			Request{
-				ID: 150,
-				Name: "Putin",
-				Age: 450,
-				Method: "GetByName",
-				ServAdress: "http://localhost:8080",
-		},
 			Request{
 				ID: 150,
 				Name: "Putin",
@@ -82,105 +85,44 @@ func testRequest(sr Request)(error){
 				ServAdress: "http://localhost:8080",
 		},
 	}
-	 mu.Unlock()
-	
 	lenSlice := len(requests)
-
+	mu.Unlock()
+	
 	var wg sync.WaitGroup 
 	
-	for i:=0; i<50000; i++{
+	numReit := 40000
+	numGoroutine := 2
+	expectedRow := numReit * numGoroutine
+
+	for i:=0; i<numReit; i++{
 		
-		wg.Add(9)
+		wg.Add(numGoroutine)
 		//выбираем случайный запрос из слайса
 		go func(){
 		rand := requests[rand.Intn(lenSlice)]
 		err := testRequest(rand)
 			if err != nil{
-				fmt.Print("The request failed")
+				t.Error("The request failed")
 			}
-			// fmt.Println(1)
 			wg.Done()
 		}()	
 			go func(){
 			rand2 := requests[rand.Intn(lenSlice)]
 			err := testRequest(rand2)
 				if err != nil{
-					fmt.Print("The request failed")
+					t.Error("The request failed")
 				}	
-				// fmt.Println(2)
 				wg.Done()
 			}()
-				go func(){
-				rand3 := requests[rand.Intn(lenSlice)] 
-				err := testRequest(rand3)
-					if err != nil{
-						fmt.Println("The request failed")
-					}
-					// fmt.Print(3)
-					wg.Done()
-				}()	
-					go func(){
-					rand4 := requests[rand.Intn(lenSlice)]
-					err := testRequest(rand4)
-						if err != nil{
-							fmt.Println("The request failed")
-						}
-						// fmt.Print(4)
-						wg.Done()
-					}()	
-						go func(){
-						rand5 := requests[rand.Intn(lenSlice)]
-						// mu.Unlock() 
-						err := testRequest(rand5)
-							if err != nil{
-								fmt.Println("The request failed")
-							}
-							// fmt.Print(5)
-							wg.Done()
-						}()	
-							
-						go func(){
-							rand6 := requests[rand.Intn(lenSlice)]
-							// mu.Unlock() 
-							err := testRequest(rand6)
-								if err != nil{
-									fmt.Print("The request failed")
-								}
-								// fmt.Println(6)
-								 wg.Done()
-							}()	
-
-							go func(){
-								rand7 := requests[rand.Intn(lenSlice)]
-								// mu.Unlock() 
-								err := testRequest(rand7)
-									if err != nil{
-										fmt.Print("The request failed")
-									}
-									// fmt.Println(6)
-									 wg.Done()
-								}()	
-								go func(){
-									rand8 := requests[rand.Intn(lenSlice)]
-									// mu.Unlock() 
-									err := testRequest(rand8)
-										if err != nil{
-											fmt.Print("The request failed")
-										}
-										// fmt.Println(6)
-										 wg.Done()
-									}()	
-									go func(){
-										rand9 := requests[rand.Intn(lenSlice)]
-										// mu.Unlock() 
-										err := testRequest(rand9)
-											if err != nil{
-												fmt.Print("The request failed")
-											}
-											// fmt.Println(6)
-											 wg.Done()
-										}()	
+				
 		wg.Wait()
-		// fmt.Println("request number",i)
+		
+	}
+	
+	
+	var count int
+	err = db.QueryRow("select count(*) from usersdb.users").Scan(&count)
+	if count != expectedRow{
+		t.Error("Test failed")
 	}
 }
