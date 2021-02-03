@@ -123,7 +123,7 @@ func TestProductivity(t *testing.T){
 	
 	var count int
 	//сравниваем количество ожидаемых записей в таблице  с фактическим
-	//еси равны, сервер обработал все заявки
+	//если равны, то сервер обработал все запросы
 	err = db.QueryRow("select count(*) from usersdb.users").Scan(&count)
 	if count != expectedRow{
 		t.Error("Test failed")
