@@ -3,12 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"strconv"
-	"syscall"
 )
 
 type Server struct {
@@ -139,6 +135,6 @@ func (s Server) Run() {
 	http.HandleFunc("/GetByName", s.handlerGetByName)
 	http.HandleFunc("/GetByAge", s.handlerGetByAge)
 
-	fmt.Println("Запустил на ")
+	fmt.Println("Запустил на ",s.httpsrv.Addr )
 	s.httpsrv.ListenAndServe()
 }
