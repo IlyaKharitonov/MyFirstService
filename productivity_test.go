@@ -90,11 +90,11 @@ func TestProductivity(t *testing.T){
 	
 	var wg sync.WaitGroup 
 	
-	numReit := 40000
+	counter := 40000
 	numGoroutine := 2
-	expectedRow := numReit * numGoroutine
+	expectedRow := counter * numGoroutine
 
-	for i:=0; i<numReit; i++{
+	for i:=0; i<counter; i++{
 		
 		wg.Add(numGoroutine)
 		//выбираем случайный запрос из слайса
