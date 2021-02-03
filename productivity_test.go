@@ -3,7 +3,6 @@
  import (
 	 "testing"
 	 "math/rand"
-	//  "fmt"
 	 "net/http"
 	 "log"
 	 "strconv"
@@ -23,8 +22,8 @@
 	ServAdress string
 }
 
+	//функция, которая отправляет на сервер тестовый запрос
 func testRequest(sr Request)(error){
-
 	url := sr.ServAdress+"/"+sr.Method+"?id="+strconv.Itoa(sr.ID)+"&name="+sr.Name+"&age="+strconv.Itoa(sr.Age)
 	searchReq,err:= http.NewRequest("GET",url,nil)
 	if err != nil{
@@ -37,7 +36,6 @@ func testRequest(sr Request)(error){
 	}
 	// defer client.CloseIdleConnections()
 	return  err
-
 }
 
 func TestProductivity(t *testing.T){
@@ -46,6 +44,7 @@ func TestProductivity(t *testing.T){
 	if err != nil {
 		log.Fatal("Error connecting to the database when starting the service")
 	}
+	//перед запуском теста удаляем все записи
 	_, err = db.Exec("delete from usersdb.users")
     if err != nil{
         log.Fatal(err)
@@ -54,6 +53,7 @@ func TestProductivity(t *testing.T){
 	var mu sync.Mutex
 
 	mu.Lock()
+	//тестовые запросы, которые отправляются в случайном порядке
 	requests := []Request{
 	   
 			Request{
@@ -92,14 +92,16 @@ func TestProductivity(t *testing.T){
 	
 	counter := 40000
 	numGoroutine := 2
+	//количество ожидаемых записей  в таблице
 	expectedRow := counter * numGoroutine
 
 	for i:=0; i<counter; i++{
 		
 		wg.Add(numGoroutine)
-		//выбираем случайный запрос из слайса
 		go func(){
+		//выбираем случайный запрос из слайса
 		rand := requests[rand.Intn(lenSlice)]
+		//делаем запрос 
 		err := testRequest(rand)
 			if err != nil{
 				t.Error("The request failed")
@@ -119,8 +121,9 @@ func TestProductivity(t *testing.T){
 		
 	}
 	
-	
 	var count int
+	//сравниваем количество ожидаемых записей в таблице  с фактическим
+	//еси равны, сервер обработал все заявки
 	err = db.QueryRow("select count(*) from usersdb.users").Scan(&count)
 	if count != expectedRow{
 		t.Error("Test failed")
