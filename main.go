@@ -4,19 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"flag"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
-	"time"
 	"os"
 	"os/signal"
 	"syscall"
-	
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	addr := flag.String("addr", ":8080", "Server address")
-	addrDB := flag.String("addrDB", "root:1643@(0.0.0.0:3306)/usersdb", "Database address")
+	addrDB := flag.String("addrDB", "root:1643@(mysqldb)/usersdb", "Database address")
 
 	flag.Parse()
 
