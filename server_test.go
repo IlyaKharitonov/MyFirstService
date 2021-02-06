@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "database/sql"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -73,7 +72,8 @@ func (m mockStorage) GetByAge(age int) (users []Data, err error) {
 	return users, nil
 }
 
-func database() Server { //
+
+func database() Server {
 
 	var storage Storager = mockStorage{}
 

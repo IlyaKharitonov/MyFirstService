@@ -16,19 +16,14 @@ services:
 
     mysqldb:
 
-        container_name: mysqldb
-
         image: mysql:5.7.32
 
         environment: 
             - MYSQL_ROOT_PASSWORD=1643
 
-        ports:
-            - "3306:3306"
+        
     
-    networks:
-        net:
-            driver: bridge
+    
     
       
 

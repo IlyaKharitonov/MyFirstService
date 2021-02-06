@@ -82,3 +82,6 @@ func (s Storage) GetByAge(age int) (users []Data, err error) {
 	}
 	return users, err
 }
+
+
+
