@@ -39,17 +39,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	//создаем объект хранилище
 	var storage Storager = Storage{
 		database: db,
 	}
-
+	//создаем объект сервер и передаем в него хранилище
 	srv := http.Server{Addr: *addr}
 	server := Server{
 		httpsrv: srv,
 		strg:    storage,
 	}
-
+	//обработка сигнала
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGTERM)
 	go func() {
@@ -60,7 +60,6 @@ func main() {
 			log.Fatal("server stopped by signal")
 		}
 	}()
-
+	//пуск
 	server.Run()
-
 }
