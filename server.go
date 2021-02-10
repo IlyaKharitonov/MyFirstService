@@ -126,7 +126,6 @@ func (s Server) handlerGetByAge(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func (s Server) Run() {
 
 	http.HandleFunc("/Add", s.handlerAdd)
@@ -136,6 +135,6 @@ func (s Server) Run() {
 	http.HandleFunc("/GetByName", s.handlerGetByName)
 	http.HandleFunc("/GetByAge", s.handlerGetByAge)
 
-	fmt.Println("Запустил на ",s.httpsrv.Addr )
+	fmt.Println("Запустил на localhost", s.httpsrv.Addr)
 	s.httpsrv.ListenAndServe()
 }

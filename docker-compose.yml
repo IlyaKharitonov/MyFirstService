@@ -12,18 +12,16 @@ services:
         command: ./MyFirstService
 
 
-    
-
     mysqldb:
 
         image: mysql:5.7.32
 
         environment: 
             - MYSQL_ROOT_PASSWORD=1643
-
+         
+    
+    
         
-    
-    
-    
+            
       
 
