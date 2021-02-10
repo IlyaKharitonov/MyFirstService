@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"log"
 )
 
 type Server struct {
@@ -15,7 +16,10 @@ type Server struct {
 //обрабатывает запрс в зависимости от его содержимого
 func (s Server) handlerAdd(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
-	age, _ := strconv.Atoi(r.FormValue("age"))
+	age,err := strconv.Atoi(r.FormValue("age"))
+	if err != nil{
+		log.Fatal("Error conversion in Add")
+	}
 	if name == "" || age == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "No data transferred. Expected format Add?name=Borat&Age=68")
@@ -31,9 +35,15 @@ func (s Server) handlerAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s Server) handlerUpdate(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.Atoi(r.FormValue("id"))
+	id,err := strconv.Atoi(r.FormValue("id"))
+	if err != nil{
+		log.Fatal("Error conversion in Update")
+	}
 	name := r.FormValue("name")
-	age, _ := strconv.Atoi(r.FormValue("age"))
+	age,err := strconv.Atoi(r.FormValue("age"))
+	if err != nil{
+		log.Fatal("Error conversion in Update")
+	}
 	if id == 0 || name == "" || age == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "No data transferred. Expected format Update?id=69&name=Borat&Age=68")
@@ -62,7 +72,10 @@ func (s Server) handlerCount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s Server) handlerGet(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.Atoi(r.FormValue("id"))
+	id,err := strconv.Atoi(r.FormValue("id"))
+	if err != nil{
+		log.Fatal("Error conversion in Get")
+	}
 	if id == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "No data received. Expected format Get?id=69")
@@ -101,7 +114,10 @@ func (s Server) handlerGetByName(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s Server) handlerGetByAge(w http.ResponseWriter, r *http.Request) {
-	age, _ := strconv.Atoi(r.FormValue("age"))
+	age,err:= strconv.Atoi(r.FormValue("age"))
+	if err != nil{
+		log.Fatal("Error conversion in GetByAge")
+	}
 	if age == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, "No data received. Expected format GetByAge?age=68")

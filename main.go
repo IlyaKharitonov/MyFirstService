@@ -14,20 +14,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
-	//ждем пока развернется база
-	<-time.After(12 * time.Second)
 
-	addr := flag.String("addr", ":8080", "Server address")
-	addrDB := flag.String("addrDB", "root:1643@(mysqldb)/", "Database address")
-	flag.Parse()
-
-	db, err := sql.Open("mysql", *addrDB)
+func DB(data string)(*sql.DB, error){
+	db, err := sql.Open("mysql", data)
 	if err != nil {
 		log.Fatal("Error connecting to the database when starting the service")
 	}
 	//создаем базу и таблицу
-	_, err = db.Exec("create database usersdb")
+	_, err = db.Exec("create database if not exists usersdb")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,8 +29,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = db.Exec("create table users(id int auto_increment primary key, name varchar(30) not null, age int not null) ")
+	_, err = db.Exec("create table if not exists users(id int auto_increment primary key, name varchar(30) not null, age int not null) ")
 	if err != nil {
+		log.Fatal(err)
+	}
+	return db, err
+}
+
+func main() {
+	port := flag.String("port", ":8080", "Server address")
+	login := flag.String("user", "root", "Login")
+	pass := flag.String("pass", "1643", "Password")
+	//addr := flag.String("addr","0.0.0.0:3306","Address")
+	flag.Parse()
+
+	data := *login+":"+*pass+"@(mysqldb)/"
+
+	db, err := DB(data)
+	if err != nil{
 		log.Fatal(err)
 	}
 	//создаем объект хранилище
@@ -44,7 +54,7 @@ func main() {
 		database: db,
 	}
 	//создаем объект сервер и передаем в него хранилище
-	srv := http.Server{Addr: *addr}
+	srv := http.Server{Addr: *port}
 	server := Server{
 		httpsrv: srv,
 		strg:    storage,

@@ -53,8 +53,7 @@ func (s Storage) GetByName(name string) (users []Data, err error) {
 	if err != nil {
 		return nil, err
 	}
-	// users := []Data{}
-	for rows.Next() {
+		for rows.Next() {
 		d := Data{}
 		err = rows.Scan(&d.ID, &d.Name, &d.Age)
 		if err != nil {
