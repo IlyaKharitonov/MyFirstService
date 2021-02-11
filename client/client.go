@@ -1,29 +1,26 @@
  package main 
- import (
- package main 
-	 "fmt"
- package main 
-	 "net/http"
- package main 
-	 "log"
- package main 
-	 "strconv"
- package main 
-	 "time"
-	 "encoding/js
-	 "io/ioutil"
 
-on"
-	 "flag"
+ import (
+	 "fmt"
+	 "net/http"
+	 "log"
+	 "strconv"
+	 "time"
+	 "io/ioutil"
+	 "encoding/json"
  )
-	"strro=v"
-&himtorte(eout: time.Second}
+
+var client = &http.Client{Timeout: time.Second}
 
 type User struct{
 	Id int
 	Name string
 	Age int
  }
+
+//  type serachResponse struct{
+	
+//  }
 
  type searchRequest struct{
 	ID int
@@ -35,8 +32,10 @@ type User struct{
 
 func Request(sr searchRequest)(User,error){
 
+
 	url := sr.ServAdress+"/"+sr.Method+"?id="+strconv.Itoa(sr.ID)+"&name="+sr.Name+"&age="+strconv.Itoa(sr.Age)
 
+	// fmt.Println(url)
 	searchReq,err:= http.NewRequest("GET",url,nil)
 	if err != nil{
 		log.Fatal(err)
@@ -56,20 +55,20 @@ func Request(sr searchRequest)(User,error){
 	}
 	return res, err
 }
-func main(){
-	id := flag.Int("id","","")
-	name := flag.String("name","","")
-	age := flag.Int("age","","")
-	method := flag.String("method","","")
-	addr := flag.String("addr", "")
 
-		req := searchRequest{
+
+func main(){
+	
+	req := searchRequest{
 		ID: 150,
 		Name: "Denis",
 		Age: 450,
 		Method: "Get",
 		ServAdress: "http://localhost:8080",
 	}
+
 	resResp, _ := Request(req)
 	fmt.Println(resResp)
+
+
 }
