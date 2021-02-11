@@ -1,4 +1,5 @@
- package main 
+
+package main 
 
  import (
 	 "fmt"
@@ -18,10 +19,6 @@ type User struct{
 	Age int
  }
 
-//  type serachResponse struct{
-	
-//  }
-
  type searchRequest struct{
 	ID int
 	Name string
@@ -32,10 +29,8 @@ type User struct{
 
 func Request(sr searchRequest)(User,error){
 
-
 	url := sr.ServAdress+"/"+sr.Method+"?id="+strconv.Itoa(sr.ID)+"&name="+sr.Name+"&age="+strconv.Itoa(sr.Age)
 
-	// fmt.Println(url)
 	searchReq,err:= http.NewRequest("GET",url,nil)
 	if err != nil{
 		log.Fatal(err)
@@ -55,20 +50,20 @@ func Request(sr searchRequest)(User,error){
 	}
 	return res, err
 }
-
-
 func main(){
-	
-	req := searchRequest{
+	id := flag.Int("id","","")
+	name := flag.String("name","","")
+	age := flag.Int("age","","")
+	method := flag.String("method","","")
+	addr := flag.String("addr", "")
+
+		req := searchRequest{
 		ID: 150,
 		Name: "Denis",
 		Age: 450,
 		Method: "Get",
 		ServAdress: "http://localhost:8080",
 	}
-
 	resResp, _ := Request(req)
 	fmt.Println(resResp)
-
-
-}
+} 
