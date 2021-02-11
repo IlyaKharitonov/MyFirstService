@@ -14,8 +14,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-
-func DB(data string)(*sql.DB, error){
+func DB(data string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", data)
 	if err != nil {
 		log.Fatal("Error connecting to the database when starting the service")
@@ -40,13 +39,13 @@ func main() {
 	port := flag.String("port", ":8080", "Server address")
 	login := flag.String("user", "root", "Login")
 	pass := flag.String("pass", "1643", "Password")
-	//addr := flag.String("addr","0.0.0.0:3306","Address")
+	addr := flag.String("addr", "0.0.0.0:3306", "Address")
 	flag.Parse()
 
-	data := *login+":"+*pass+"@(mysqldb)/"
+	data := *login + ":" + *pass + "@(" + *addr + ")/"
 
 	db, err := DB(data)
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	//создаем объект хранилище

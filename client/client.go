@@ -1,16 +1,23 @@
  package main 
-
  import (
+ package main 
 	 "fmt"
+ package main 
 	 "net/http"
+ package main 
 	 "log"
+ package main 
 	 "strconv"
+ package main 
 	 "time"
+	 "encoding/js
 	 "io/ioutil"
-	 "encoding/json"
- )
 
-var client = &http.Client{Timeout: time.Second}
+on"
+	 "flag"
+ )
+	"strro=v"
+&himtorte(eout: time.Second}
 
 type User struct{
 	Id int
@@ -50,6 +57,12 @@ func Request(sr searchRequest)(User,error){
 	return res, err
 }
 func main(){
+	id := flag.Int("id","","")
+	name := flag.String("name","","")
+	age := flag.Int("age","","")
+	method := flag.String("method","","")
+	addr := flag.String("addr", "")
+
 		req := searchRequest{
 		ID: 150,
 		Name: "Denis",

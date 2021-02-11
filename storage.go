@@ -43,17 +43,17 @@ func (s Storage) Count() (count int, err error) {
 
 // Получить запись по id
 func (s Storage) Get(id int) (user Data, err error) {
-	err = s.database.QueryRow("select * from usersdb.users where id=?", id).Scan(&user.ID, &user.Name, &user.Age)
+	err = s.database.QueryRow("select id,name,age from usersdb.users where id=?", id).Scan(&user.ID, &user.Name, &user.Age)
 	return
 }
 
 // Получение записи по имени пользователя
 func (s Storage) GetByName(name string) (users []Data, err error) {
-	rows, err := s.database.Query("select * from usersdb.users where name=?", name)
+	rows, err := s.database.Query("select id,name,age from usersdb.users where name=?", name)
 	if err != nil {
 		return nil, err
 	}
-		for rows.Next() {
+	for rows.Next() {
 		d := Data{}
 		err = rows.Scan(&d.ID, &d.Name, &d.Age)
 		if err != nil {
@@ -66,7 +66,7 @@ func (s Storage) GetByName(name string) (users []Data, err error) {
 
 // Получение записей по возрасту
 func (s Storage) GetByAge(age int) (users []Data, err error) {
-	rows, err := s.database.Query("select * from usersdb.users where age=?", age)
+	rows, err := s.database.Query("select id,name,age from usersdb.users where age=?", age)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +81,3 @@ func (s Storage) GetByAge(age int) (users []Data, err error) {
 	}
 	return users, err
 }
-
-
-
