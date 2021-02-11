@@ -1,17 +1,19 @@
-
 package main 
 
  import (
 	 "fmt"
 	 "net/http"
 	 "log"
-	 "strconv"
+// 	 "strconv"
 	 "time"
 	 "io/ioutil"
 	 "encoding/json"
+	 "flag"
+	
  )
 
 var client = &http.Client{Timeout: time.Second}
+
 
 type User struct{
 	Id int
@@ -20,16 +22,17 @@ type User struct{
  }
 
  type searchRequest struct{
-	ID int
+	ID string
 	Name string
-	Age int
+	Age string
 	Method string
 	ServAdress string
+	Message string
 }
 
-func Request(sr searchRequest)(User,error){
+func Request(sr searchRequest)(User, error){
 
-	url := sr.ServAdress+"/"+sr.Method+"?id="+strconv.Itoa(sr.ID)+"&name="+sr.Name+"&age="+strconv.Itoa(sr.Age)
+	url := sr.ServAdress+"/"+sr.Method+"?id="+sr.ID+"&name="+sr.Name+"&age="+sr.Age
 
 	searchReq,err:= http.NewRequest("GET",url,nil)
 	if err != nil{
@@ -39,30 +42,38 @@ func Request(sr searchRequest)(User,error){
 	if err != nil{
 		log.Fatal(err)
 	}
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil{
-		log.Fatal(err)
+	if sr.Method == "Get"||sr.Method == "GetByName" || sr.Method == "GetByAge"{
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil{
+			log.Fatal(err)
+		}
+		var res User
+		err = json.Unmarshal(body, &res)
+		if err != nil{
+			log.Fatal(err)
+		}
+		return res, err
 	}
-	var res User
-	err = json.Unmarshal(body, &res)
-	if err != nil{
-		log.Fatal(err)
-	}
-	return res, err
+	emptystruct := User{
+        Name:sr.Method,
+    }
+	return emptystruct,err
+
 }
 func main(){
-	id := flag.Int("id","","")
-	name := flag.String("name","","")
-	age := flag.Int("age","","")
-	method := flag.String("method","","")
-	addr := flag.String("addr", "")
+	id := flag.String("id","","")
+	name := flag.String("name","Putin","")
+	age := flag.String("age","","")
+	method := flag.String("method","Add","")
+	addr := flag.String("addr","http://localhost:8080","")
 
+	flag.Parse()
 		req := searchRequest{
-		ID: 150,
-		Name: "Denis",
-		Age: 450,
-		Method: "Get",
-		ServAdress: "http://localhost:8080",
+		ID: *id,
+		Name: *name,
+		Age: *age,
+		Method: *method,
+		ServAdress: *addr,
 	}
 	resResp, _ := Request(req)
 	fmt.Println(resResp)
